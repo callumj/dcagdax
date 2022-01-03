@@ -84,7 +84,7 @@ func (f *Ftx) GetProduct(productId string) (*Product, error) {
 	}, nil
 }
 
-func (f *Ftx) Deposit(currency string, amount float64) (*time.Time, error) {
+func (f *Ftx) Deposit(currency string, amount float64, paymentMethodName string) (*time.Time, error) {
 	return nil, errors.New("ftx exchange bank deposit is not supported by exchange api")
 }
 

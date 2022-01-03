@@ -51,9 +51,9 @@ func (mr *MockExchangeMockRecorder) CreateOrder(arg0, arg1, arg2, arg3 interface
 }
 
 // Deposit mocks base method.
-func (m *MockExchange) Deposit(arg0 string, arg1 float64) (*time.Time, error) {
+func (m *MockExchange) Deposit(arg0 string, arg1 float64, arg2 string) (*time.Time, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Deposit", arg0, arg1)
+	ret := m.ctrl.Call(m, "Deposit", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*time.Time)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1

@@ -20,17 +20,18 @@ import (
 var skippedForDebug = errors.New("Skipping because trades are not enabled")
 
 type syncRequest struct {
-	usd         float64
-	orderSpread float64
-	orderType   exchanges.OrderTypeType
-	fee         float64
-	every       time.Duration
-	until       time.Time
-	after       time.Time
-	autoFund    bool
-	force       bool
-	coins       []string
-	currency    string
+	usd               float64
+	orderSpread       float64
+	orderType         exchanges.OrderTypeType
+	fee               float64
+	every             time.Duration
+	until             time.Time
+	after             time.Time
+	autoFund          bool
+	force             bool
+	coins             []string
+	currency          string
+	paymentMethodName string
 }
 
 type orderDetails struct {
@@ -370,7 +371,7 @@ func (s *gdaxSchedule) makePurchase(productId string, amount float64) error {
 
 func (s *gdaxSchedule) makeDeposit(amount float64) (*time.Time, error) {
 
-	payoutAt, err := s.exchange.Deposit(s.req.currency, amount)
+	payoutAt, err := s.exchange.Deposit(s.req.currency, amount, s.req.paymentMethodName)
 
 	if err != nil {
 		return nil, err

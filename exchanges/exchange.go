@@ -17,7 +17,7 @@ type Exchange interface {
 
 	GetProduct(productId string) (*Product, error)
 
-	Deposit(currency string, amount float64) (*time.Time, error)
+	Deposit(currency string, amount float64, paymentMethodName string) (*time.Time, error)
 
 	CreateOrder(productId string, amount float64, orderType OrderTypeType, limitOrderFunc CalcLimitOrder) (*Order, error)
 

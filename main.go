@@ -60,6 +60,11 @@ var (
 		"Automatically initiate ACH deposits.",
 	).Bool()
 
+	paymentMethodName = kingpin.Flag(
+		"paymentmethodname",
+		"Payment method name",
+	).String()
+
 	force = kingpin.Flag(
 		"force",
 		"Execute trade regardless of the window. Use with caution every run will execute the trade",
@@ -91,7 +96,7 @@ func main() {
 	logger := l.Sugar()
 	defer logger.Sync()
 
-	exchange, err := initExchange(*exchangeType)
+	exchange, err := initExchange(*exchangeType, logger)
 	if err != nil {
 		logger.Error(err)
 		os.Exit(1)
@@ -109,17 +114,18 @@ func main() {
 	}
 
 	req := syncRequest{
-		autoFund:    *autoFund,
-		usd:         *usd,
-		orderType:   oType,
-		orderSpread: *orderSpread,
-		fee:         *fee,
-		every:       *every,
-		until:       *until,
-		after:       *after,
-		coins:       *coins,
-		force:       *force,
-		currency:    *currency,
+		autoFund:          *autoFund,
+		usd:               *usd,
+		orderType:         oType,
+		orderSpread:       *orderSpread,
+		fee:               *fee,
+		every:             *every,
+		until:             *until,
+		after:             *after,
+		coins:             *coins,
+		force:             *force,
+		currency:          *currency,
+		paymentMethodName: *paymentMethodName,
 	}
 
 	schedule, err := newGdaxSchedule(
@@ -139,10 +145,10 @@ func main() {
 	}
 }
 
-func initExchange(exType string) (exchange exchanges.Exchange, err error) {
+func initExchange(exType string, l *zap.SugaredLogger) (exchange exchanges.Exchange, err error) {
 	switch exType {
 	case "coinbase":
-		exchange, err = exchanges.NewCoinbase()
+		exchange, err = exchanges.NewCoinbase(l)
 	case "gemini":
 		exchange, err = exchanges.NewGemini()
 	case "ftxus":

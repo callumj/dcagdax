@@ -8,13 +8,15 @@ import (
 
 	exchange "github.com/sberserker/dcagdax/clients/coinbase"
 	"github.com/shopspring/decimal"
+	"go.uber.org/zap"
 )
 
 type Coinbase struct {
 	client *exchange.Client
+	l      *zap.SugaredLogger
 }
 
-func NewCoinbase() (*Coinbase, error) {
+func NewCoinbase(l *zap.SugaredLogger) (*Coinbase, error) {
 	secret := os.Getenv("COINBASE_SECRET")
 	key := os.Getenv("COINBASE_KEY")
 	passphrase := os.Getenv("COINBASE_PASSPHRASE")
@@ -33,6 +35,7 @@ func NewCoinbase() (*Coinbase, error) {
 
 	return &Coinbase{
 		client: exchange.NewClient(secret, key, passphrase),
+		l:      l,
 	}, nil
 }
 
@@ -104,7 +107,8 @@ func (c *Coinbase) GetProduct(productId string) (*Product, error) {
 	}, nil
 }
 
-func (c *Coinbase) Deposit(currency string, amount float64) (*time.Time, error) {
+func (c *Coinbase) Deposit(currency string, amount float64, paymentMethodName string) (*time.Time, error) {
+	c.l.Info("Making deposit")
 	paymentMethods, err := c.client.ListPaymentMethods()
 
 	if err != nil {
@@ -114,7 +118,11 @@ func (c *Coinbase) Deposit(currency string, amount float64) (*time.Time, error) 
 	var bankAccount *exchange.PaymentMethod = nil
 
 	for i := range paymentMethods {
-		if paymentMethods[i].Type == "ach_bank_account" {
+		c.l.Infof("Looking at payment method %s", paymentMethods[i].Name)
+		if paymentMethods[i].Type != "ach_bank_account" {
+			continue
+		}
+		if paymentMethodName == paymentMethods[i].Name {
 			bankAccount = &paymentMethods[i]
 		}
 	}

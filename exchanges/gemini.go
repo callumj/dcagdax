@@ -69,7 +69,7 @@ func (g *Gemini) GetProduct(productId string) (*Product, error) {
 	}, nil
 }
 
-func (g *Gemini) Deposit(currency string, amount float64) (*time.Time, error) {
+func (g *Gemini) Deposit(currency string, amount float64, paymentMethodName string) (*time.Time, error) {
 	return nil, errors.New("gemini exchange bank deposit is not supported by exchange api")
 }
 
